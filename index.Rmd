@@ -16,14 +16,38 @@ Se consultaron @rspocc
 ```{r,  echo=FALSE, message=FALSE}
 require(leaflet)
 Occ_Data<-read.table("Fdesmarestia_Occ_totales.csv", header = TRUE, sep=",")
- OCc_CoodOnly<-Occ_Data[,1:3]
+ OCc_CoodOnly<-Occ_Data[,1:4]
   OCc_na.omit<-na.omit(OCc_CoodOnly)
+  
+  
+  
 leaflet(OCc_na.omit) %>%
-  addProviderTiles(providers$Jawg.Light) %>%
+  addProviderTiles(providers$Stamen.TonerLite) %>%
   setView(lng = 0, lat = 0, zoom = 1) %>%
   addMarkers(
   clusterOptions = markerClusterOptions()
 )
  
 ```
+
+```{r,  echo=FALSE, message=FALSE}
+require(leaflet)
+outline <- quakes[chull(quakes$long, quakes$lat),]
+
+map <- leaflet(quakes) %>%
+  # Base groups
+  addTiles(group = "OSM (default)") %>%
+    # Overlay groups
+  addCircles(~long, ~lat, ~10^mag/5, stroke = F, group = "Quakes") %>%
+  addPolygons(data = outline, lng = ~long, lat = ~lat,
+    fill = F, weight = 2, color = "#FFFFCC", group = "Outline") %>%
+  # Layers control
+  addLayersControl(
+    overlayGroups = c("Quakes", "Outline"),
+    options = layersControlOptions(collapsed = FALSE)
+  )
+map
+ 
+```
+
 **Figura suplementaria 1.** Ocurrencias de *Firoloida desmarestia* 
