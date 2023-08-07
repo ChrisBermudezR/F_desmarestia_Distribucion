@@ -8,7 +8,7 @@ output: html_document
 
 ## Descarga de los registros de ocurrencia
 
-Se consultaron @rspocc
+Se consultaron las ocurrencias de la especie *Filoroida desmaretia* en utilizando el paquete *spocc* de R [@rspocc].
 
 
 
@@ -18,36 +18,29 @@ require(leaflet)
 Occ_Data<-read.table("Fdesmarestia_Occ_totales.csv", header = TRUE, sep=",")
  OCc_CoodOnly<-Occ_Data[,1:4]
   OCc_na.omit<-na.omit(OCc_CoodOnly)
+obis<-subset(OCc_na.omit, prov=="obis")
+idigbio<-subset(OCc_na.omit, prov=="idigbio")
+gbif<-subset(OCc_na.omit, prov=="gbif")
+inat<-subset(OCc_na.omit, prov=="inat")
   
-  
-  
-leaflet(OCc_na.omit) %>%
-  addProviderTiles(providers$Stamen.TonerLite) %>%
-  setView(lng = 0, lat = 0, zoom = 1) %>%
-  addMarkers(
-  clusterOptions = markerClusterOptions()
-)
+
+pal <- colorFactor(c("navy", "red", "black", "orange"), domain = c("obis", "idigbio", "inat","gbif" ))
  
-```
-
-```{r,  echo=FALSE, message=FALSE}
-require(leaflet)
-outline <- quakes[chull(quakes$long, quakes$lat),]
-
-map <- leaflet(quakes) %>%
-  # Base groups
-  addTiles(group = "OSM (default)") %>%
+map <- leaflet(OCc_CoodOnly) %>%
+  addProviderTiles(providers$Stamen.TonerLite) %>%
     # Overlay groups
-  addCircles(~long, ~lat, ~10^mag/5, stroke = F, group = "Quakes") %>%
-  addPolygons(data = outline, lng = ~long, lat = ~lat,
-    fill = F, weight = 2, color = "#FFFFCC", group = "Outline") %>%
-  # Layers control
+  addCircles(data = obis, lng =~longitude, lat = ~latitude,group = "obis", color = "blue")%>%
+ addCircles(data = idigbio, lng =~longitude, lat = ~latitude,group = "idigbio", color = "red")%>%
+  addCircles(data = inat, lng =~longitude, lat = ~latitude,group = "inat", color = "black")%>%
+  addCircles(data = gbif, lng =~longitude, lat = ~latitude,group = "gbif", color = "orangered")%>%
   addLayersControl(
-    overlayGroups = c("Quakes", "Outline"),
+    overlayGroups = c("obis", "idigbio", "inat","gbif" ),
     options = layersControlOptions(collapsed = FALSE)
   )
 map
- 
 ```
 
+
 **Figura suplementaria 1.** Ocurrencias de *Firoloida desmarestia* 
+
+## Referencias
