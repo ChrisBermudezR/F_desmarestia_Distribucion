@@ -38,8 +38,8 @@ map <- leaflet(OCc_CoodOnly) %>%
  addCircles(data = idigbio, lng =~longitude, lat = ~latitude,group = "idigbio", color = "green")%>%
   addCircles(data = inat, lng =~longitude, lat = ~latitude,group = "inat", color = "black")%>%
   addCircles(data = gbif, lng =~longitude, lat = ~latitude,group = "gbif", color = "orangered")%>%
-  addLayersControl(overlayGroups = c("obis", "idigbio", "inat","gbif" ),    options = layersControlOptions(collapsed = FALSE))%>%
-  addPolylines(data = data_map,  stroke = 0.5, opacity = 0.5, color = "black")
+  addLayersControl(overlayGroups = c("obis", "idigbio", "inat","gbif" ),    options = layersControlOptions(collapsed = FALSE))
+  #addPolylines(data = data_map,  stroke = 0.5, opacity = 0.5, color = "black")
 map
 ```
 
