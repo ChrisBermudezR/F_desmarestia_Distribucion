@@ -15,6 +15,7 @@ Se consultaron las ocurrencias de la especie *Filoroida desmaretia* en utilizand
 
 ```{r,  echo=FALSE, message=FALSE}
 require(leaflet)
+require(sf)
 Occ_Data<-read.table("Fdesmarestia_Occ_totales.csv", header = TRUE, sep=",")
  OCc_CoodOnly<-Occ_Data[,1:4]
   OCc_na.omit<-na.omit(OCc_CoodOnly)
@@ -25,18 +26,20 @@ inat<-subset(OCc_na.omit, prov=="inat")
   
 
 pal <- colorFactor(c("navy", "red", "black", "orange"), domain = c("obis", "idigbio", "inat","gbif" ))
+data_map <- sf::read_sf("Fronteras_Marinas_WGS84.shp")
+data_map <- sf::st_transform(data_map, crs = '+proj=longlat +datum=WGS84')
+
  
 map <- leaflet(OCc_CoodOnly) %>%
-  addProviderTiles(providers$Stamen.TonerLite) %>%
+  addTiles() %>%
+  #addProviderTiles(providers$OpenStreetMap.BZH) %>%
     # Overlay groups
   addCircles(data = obis, lng =~longitude, lat = ~latitude,group = "obis", color = "blue")%>%
- addCircles(data = idigbio, lng =~longitude, lat = ~latitude,group = "idigbio", color = "red")%>%
+ addCircles(data = idigbio, lng =~longitude, lat = ~latitude,group = "idigbio", color = "green")%>%
   addCircles(data = inat, lng =~longitude, lat = ~latitude,group = "inat", color = "black")%>%
   addCircles(data = gbif, lng =~longitude, lat = ~latitude,group = "gbif", color = "orangered")%>%
-  addLayersControl(
-    overlayGroups = c("obis", "idigbio", "inat","gbif" ),
-    options = layersControlOptions(collapsed = FALSE)
-  )
+  addLayersControl(overlayGroups = c("obis", "idigbio", "inat","gbif" ),    options = layersControlOptions(collapsed = FALSE))%>%
+  addPolylines(data = data_map,  stroke = 0.5, opacity = 0.5, color = "black")
 map
 ```
 
